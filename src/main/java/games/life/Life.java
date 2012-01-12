@@ -1,5 +1,6 @@
 package games.life;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class Life {
@@ -64,6 +65,14 @@ public class Life {
             return true;
         }
         return alive;
+    }
+
+    public Dimension getDimension() {
+        return new Dimension(life[0].length(), life.length);
+    }
+    
+    public String[] getLife() {
+        return Arrays.copyOf(life, life.length);
     }
 
     @Override
