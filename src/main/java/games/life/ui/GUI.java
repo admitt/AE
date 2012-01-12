@@ -9,13 +9,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class GUI extends JFrame {
-
-    private Life life;
-    private int generation = 1;
+    private Painter painter;
 
     public GUI(Life life) {
         super("Game of life");
-        this.life = life;
+        this.painter = new Painter(life);
         setSize(1000, 600);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -24,38 +22,61 @@ public class GUI extends JFrame {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        g.setColor(Color.BLUE);
-        Dimension dimension = life.getDimension();
-        int cellWidth = getWidth() / dimension.width;
-        int cellHeight = getHeight() / dimension.height;
+        painter.init().draw(g).next();
+    }
 
-        int currentWidth = cellWidth;
-        int currentHeight = cellHeight;
-        for (String s : life.getLife()) {
+    private class Painter {
+        private int cellWidth, cellHeight, currentWidth, currentHeight, generation = 1;
+        private Dimension dimension;
+        private Life life;
+
+        private Painter(Life life) {
+            this.life = life;
+            dimension = life.getDimension();
+        }
+
+        private Painter init() {
+            currentWidth = cellWidth = getWidth() / dimension.width;
+            currentHeight = cellHeight = getHeight() / dimension.height;
+            return this;
+        }
+
+        private Painter draw(Graphics g) {
+            g.setColor(Color.BLUE);
+            for (String s : life.getLife()) {
+                drawCells(g, s);
+            }
+            drawGenerationNumber(g);
+            return this;
+        }
+
+        private void next() {
+            life = life.next();
+            generation++;
+        }
+
+        private void drawCells(Graphics g, String s) {
             for (char c : s.toCharArray()) {
                 if (c == '*') {
-                    g.fillOval(currentWidth - cellWidth, currentHeight - cellHeight,  cellWidth, cellHeight);
+                    g.fillOval(currentWidth - cellWidth, currentHeight - cellHeight, cellWidth, cellHeight);
                 }
                 currentWidth += cellWidth;
             }
             currentHeight += cellHeight;
             currentWidth = cellWidth;
         }
-        g.setFont(new Font("SansSerif", Font.BOLD, 16));
-        g.drawString("Generation: " + generation, 100, 100);
-        life = life.next();
-        generation++;
+
+        private void drawGenerationNumber(Graphics g) {
+            g.setFont(new Font("SansSerif", Font.BOLD, 16));
+            g.drawString("Generation: " + generation, 100, 100);
+        }
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        int generation = 1;
         GUI gui = new GUI(new Life(readLife(args[0])));
         while (true) {
             gui.repaint();
-            System.out.println("[" + generation + "]");
-            System.out.println(gui.life);
-            generation++;
-            Thread.sleep(250);
+            Thread.sleep(100);
         }
     }
 
