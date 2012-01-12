@@ -1,7 +1,8 @@
 package games.life.scala
 
-class Life(private val lifeMap: Map[Int, Map[Int, Cell]]) {
-  def this() = this (Map.empty)
+class Life private(private val lifeMap: Map[Int, Map[Int, Life#Cell]]) {
+
+  private sealed trait Cell
 
   def next: Life = {
     new Life(nextGeneration)
@@ -28,8 +29,8 @@ class Life(private val lifeMap: Map[Int, Map[Int, Cell]]) {
   private def nextGenerationCell(rowIndex: Int, cellIndex: Int, currentCell: Cell): Cell = {
     numberOfNeighbours(rowIndex, cellIndex) match {
       case 2 => currentCell
-      case 3 => LIVE
-      case _ => DEAD
+      case 3 => Life.LIVE
+      case _ => Life.DEAD
     }
   }
 
@@ -53,16 +54,8 @@ class Life(private val lifeMap: Map[Int, Map[Int, Cell]]) {
     }
   }
 
-  private def textToMap(description: Iterable[String]): Map[Int, Map[Int, Cell]] = {
-    ((0 until description.size) zip (description map lineToRow)).toMap
-  }
-
   private def mapToDescription(map: Map[Int, Map[Int, Cell]]): Iterable[String] = {
     map.toSeq.sortBy(_._1) map (_._2) map rowToLine
-  }
-
-  private def lineToRow(line: String): Map[Int, Cell] = {
-    ((0 until line.length) zip (line map charToCell)).toMap
   }
 
   private def rowToLine(row: Map[Int, Cell]): String = {
@@ -73,19 +66,34 @@ class Life(private val lifeMap: Map[Int, Map[Int, Cell]]) {
     cell match {
       case LIVE => '*'
       case DEAD => '.'
-    }
-  }
-
-  private def charToCell(char: Char) = {
-    char match {
-      case '*' => LIVE
-      case _ => DEAD
+      case _ => ' '
     }
   }
 }
 
-object Life extends Life {
-  def fromText(description: Iterator[String]): Map[Int, Map[Int, Cell]] = {
-    textToMap(description.toIterable)
+object Life {
+
+  private case object DEAD extends Life#Cell
+
+  private case object LIVE extends Life#Cell
+
+  def apply(description: Iterator[String]): Life = {
+    new Life(textToMap(description.toIterable))
+  }
+
+  private def textToMap(description: Iterable[String]): Map[Int, Map[Int, Life#Cell]] = {
+    ((0 until description.size) zip (description map lineToRow)).toMap
+  }
+
+  private def lineToRow(line: String): Map[Int, Life#Cell] = {
+    ((0 until line.length) zip (line map charToCell)).toMap
+  }
+
+  private def charToCell(char: Char): Life#Cell = {
+    char match {
+      case '*' => LIVE
+      case '.' => DEAD
+      case _ => DEAD
+    }
   }
 }
