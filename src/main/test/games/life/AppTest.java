@@ -24,7 +24,6 @@ public class AppTest {
     }
 
     @Test
-    @Ignore
     public void nextLife() {
         assertThat(new Life(LIFE1).next(), is(new Life(LIFE2)));
     }
@@ -38,7 +37,7 @@ public class AppTest {
     }
 
     @Test
-    public void isElive() {
+    public void isAlive() {
         assertThat(Life.isAlive(0, true), is(false));
         assertThat(Life.isAlive(0, false), is(false));
         assertThat(Life.isAlive(1, true), is(false));
