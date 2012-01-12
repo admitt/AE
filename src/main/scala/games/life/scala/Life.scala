@@ -1,9 +1,6 @@
 package games.life.scala
 
-class Life private(private val lifeMap: Map[Int, Map[Int, Life#Cell]]) {
-
-  private sealed trait Cell
-
+class Life private(private val lifeMap: Map[Int, Map[Int, Life.Cell]]) {
   def next: Life = {
     new Life(nextGeneration)
   }
@@ -12,21 +9,21 @@ class Life private(private val lifeMap: Map[Int, Map[Int, Life#Cell]]) {
     mapToDescription(lifeMap) mkString "\n"
   }
 
-  private def nextGeneration: Map[Int, Map[Int, Cell]] = {
+  private def nextGeneration: Map[Int, Map[Int, Life.Cell]] = {
     lifeMap map nextGenerationRow
   }
 
-  private def nextGenerationRow(rowWithIndex: (Int, Map[Int, Cell])): (Int, Map[Int, Cell]) = {
+  private def nextGenerationRow(rowWithIndex: (Int, Map[Int, Life.Cell])): (Int, Map[Int, Life.Cell]) = {
     val (rowIndex, row) = rowWithIndex
     (rowIndex, row map nextGenerationCell(rowIndex))
   }
 
-  private def nextGenerationCell(rowIndex: Int)(cellWithIndex: (Int, Cell)): (Int, Cell) = {
+  private def nextGenerationCell(rowIndex: Int)(cellWithIndex: (Int, Life.Cell)): (Int, Life.Cell) = {
     val (cellIndex, cell) = cellWithIndex
     (cellIndex, nextGenerationCell(rowIndex, cellIndex, cell))
   }
 
-  private def nextGenerationCell(rowIndex: Int, cellIndex: Int, currentCell: Cell): Cell = {
+  private def nextGenerationCell(rowIndex: Int, cellIndex: Int, currentCell: Life.Cell): Life.Cell = {
     numberOfNeighbours(rowIndex, cellIndex) match {
       case 2 => currentCell
       case 3 => Life.LIVE
@@ -47,25 +44,26 @@ class Life private(private val lifeMap: Map[Int, Map[Int, Life#Cell]]) {
         row.get(cellIndex + cellShift) match {
           case None => 0
           case Some(cell) => cell match {
-            case LIVE => 1
-            case DEAD => 0
+            case Life.LIVE => 1
+            case Life.DEAD => 0
+            case _ => 0
           }
         }
     }
   }
 
-  private def mapToDescription(map: Map[Int, Map[Int, Cell]]): Iterable[String] = {
+  private def mapToDescription(map: Map[Int, Map[Int, Life.Cell]]): Iterable[String] = {
     map.toSeq.sortBy(_._1) map (_._2) map rowToLine
   }
 
-  private def rowToLine(row: Map[Int, Cell]): String = {
+  private def rowToLine(row: Map[Int, Life.Cell]): String = {
     row.toSeq.sortBy(_._1) map (_._2) map cellToChar mkString ""
   }
 
-  private def cellToChar(cell: Cell): Char = {
+  private def cellToChar(cell: Life.Cell): Char = {
     cell match {
-      case LIVE => '*'
-      case DEAD => '.'
+      case Life.LIVE => '*'
+      case Life.DEAD => '.'
       case _ => ' '
     }
   }
@@ -73,23 +71,25 @@ class Life private(private val lifeMap: Map[Int, Map[Int, Life#Cell]]) {
 
 object Life {
 
-  private case object DEAD extends Life#Cell
+  sealed trait Cell
 
-  private case object LIVE extends Life#Cell
+  private case object DEAD extends Cell
+
+  private case object LIVE extends Cell
 
   def apply(description: Iterator[String]): Life = {
     new Life(textToMap(description.toIterable))
   }
 
-  private def textToMap(description: Iterable[String]): Map[Int, Map[Int, Life#Cell]] = {
+  private def textToMap(description: Iterable[String]): Map[Int, Map[Int, Cell]] = {
     ((0 until description.size) zip (description map lineToRow)).toMap
   }
 
-  private def lineToRow(line: String): Map[Int, Life#Cell] = {
+  private def lineToRow(line: String): Map[Int, Cell] = {
     ((0 until line.length) zip (line map charToCell)).toMap
   }
 
-  private def charToCell(char: Char): Life#Cell = {
+  private def charToCell(char: Char): Cell = {
     char match {
       case '*' => LIVE
       case '.' => DEAD
