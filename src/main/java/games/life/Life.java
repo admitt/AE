@@ -20,6 +20,7 @@ public class Life {
     }
 
     public Life next() {
+        String[] newLife = new String[life.length];
         return this;
     }
 
@@ -36,7 +37,7 @@ public class Life {
         return numberOfNeighbours;
     }
 
-    int getNumberOfCells(final int row, final int column) {
+    private int getNumberOfCells(final int row, final int column) {
         if (row < 0 || row >= life.length) {
             return 0;
         }
@@ -44,5 +45,15 @@ public class Life {
             return 0;
         }
         return life[row].charAt(column) == '*' ? 1 : 0;
+    }
+    
+    static boolean isAlive(final int numberOfNeighbours, final boolean alive) {
+        if (numberOfNeighbours < 2 || numberOfNeighbours > 3) {
+            return false;
+        }
+        if (numberOfNeighbours == 3) {
+            return true;
+        }
+        return alive;
     }
 }

@@ -36,4 +36,20 @@ public class AppTest {
         assertThat(new Life(LIFE1).getNumberOfNeighbours(1, 0), is(2));
         assertThat(new Life(LIFE1).getNumberOfNeighbours(1, 1), is(2));
     }
+
+    @Test
+    public void isElive() {
+        assertThat(Life.isAlive(0, true), is(false));
+        assertThat(Life.isAlive(0, false), is(false));
+        assertThat(Life.isAlive(1, true), is(false));
+        assertThat(Life.isAlive(1, false), is(false));
+        assertThat(Life.isAlive(2, true), is(true));
+        assertThat(Life.isAlive(2, false), is(false));
+        assertThat(Life.isAlive(3, true), is(true));
+        assertThat(Life.isAlive(3, false), is(true));
+        assertThat(Life.isAlive(4, true), is(false));
+        assertThat(Life.isAlive(4, false), is(false));
+        assertThat(Life.isAlive(8, true), is(false));
+        assertThat(Life.isAlive(8, false), is(false));
+    }
 }
