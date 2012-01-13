@@ -26,9 +26,9 @@
             parent.insert({
                 bottom:e
             });
-            token.split("").each(function (c) {
+            token.trim().split("").each(function (c) {
                 e.insert({
-                    bottom:"<td style='width:50;" + (c == "*" ? "color:red;" : "") + "'>" + c + "</td>"
+                    bottom: c == "*" ? $("bug").clone(true) : $("cross").clone(true)
                 })
             })
         });
@@ -36,6 +36,16 @@
     }
 </script>
 
-<table id="result"></table>
+<table id="result">
+</table>
+
+<table style="display: none;">
+    <tr style="display: none;">
+        <td id="bug"><img src="bug.png" alt="bug"/></td>
+    </tr>
+    <tr style="display: none;">
+        <td id="cross"><img src="cross.png" alt="cross"/></td>
+    </tr>
+</table>
 </body>
 </html>
