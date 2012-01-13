@@ -11,7 +11,7 @@
             onSuccess:function (t) {
                 draw(t.responseText)
             }
-        }).frequency(0.5);
+        }).frequency(0.1);
     });
 
     function draw(data) {
@@ -28,7 +28,7 @@
             });
             token.split("").each(function (c) {
                 e.insert({
-                    bottom:"<td>" + c + "</td>"
+                    bottom:"<td style='width:50;" + (c == "*" ? "color:red;" : "") + "'>" + c + "</td>"
                 })
             })
         });
